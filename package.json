@@ -1,0 +1,10 @@
+{
+  "name": "sqlitedump",
+  "version": "1.0.0",
+  "type": "module",
+  "module": "index.js",
+  "main": "index.js",
+  "bin": {
+    "sqlitedump": "index.js"
+  }
+}
