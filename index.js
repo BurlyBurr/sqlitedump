@@ -5,6 +5,7 @@
  ***********************************************/
 
 import { parseArgs } from 'util';
+import { version } from './package.json';
 
 /************************************************
  * CONSTANTS
@@ -37,6 +38,12 @@ function printUsageAndExit() {
   console.log('Options:');
   console.log('--exclude-table      comma-delimited list of table names to exclude');
   console.log('--help               show this info');
+  console.log('--version            show the version number');
+  process.exit();
+}
+
+function printVersionAndExit() {
+  console.log(`sqlitedump ${version}`);
   process.exit();
 }
 
@@ -74,6 +81,10 @@ let { values, positionals } = parseArgs({
       type: 'boolean',
       short: 'h',
     },
+    'version': {
+      type: 'boolean',
+      short: 'v',
+    }
   },
 });
 
@@ -81,6 +92,10 @@ let [ dbFilename ] = positionals;
 let excludedTableNames = [];
 if (values['exclude-table']) {
   excludedTableNames = values['exclude-table'].split(',');
+}
+
+if (values.version) {
+  printVersionAndExit();
 }
 
 if (values.help) {
