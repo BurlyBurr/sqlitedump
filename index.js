@@ -57,6 +57,28 @@ function sqlEscape(value, type) {
   return value;
 }
 
+function isDefaultValue(value, column) {
+  let { name, type, dflt_value, notnull } = column;
+
+  // If default value is a function, assume it's different every call
+  if (dflt_value?.endsWith('()')) {
+    return false;
+  }
+
+  // No default
+  if (dflt_value === null) {
+    return value === null || value === '';
+  }
+
+  // Do type specific comparisons
+  if (type == 'BOOLEAN') {
+    let a = dflt_value == 'TRUE' || dflt_value == 1;
+    let b = value == 'TRUE' || value == 1;
+    return a === b;
+  }
+  return value === dflt_value;
+}
+
 /************************************************
  * TOP LEVEL CODE
  ***********************************************/
@@ -126,9 +148,12 @@ tableNames.forEach(tableName => {
   rows.forEach(row => {
     let columnNames = [], columnValues = [];
     for (let i = 0; i < columns.length; i++) {
-      let { name, type, dflt_value, notnull } = columns[i];
-      columnNames.push(name);
-      columnValues.push(sqlEscape(row[i], type));
+      let column = columns[i];
+      let value = row[i];
+      if (!isDefaultValue(value, column)) {
+        columnNames.push(column.name);
+        columnValues.push(sqlEscape(value, column.type));
+      }
     }
     statements.push(`INSERT INTO ${tableName} (${columnNames.join(', ')}) VALUES (${columnValues.join(', ')});`);
   });

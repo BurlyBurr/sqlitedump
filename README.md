@@ -33,5 +33,9 @@ Currently this lets you rearrange columns and add new columns. In future
 this library may be extended to handle column renaming and column
 deletion.
 
+New in version 1.1: Columns that match the default are omitted. This means
+if you clear out all the data for a column, you can go ahead and remove
+it from your schema.
+
 This requires bun because it's dependency-free and leverages the SQLite
 features of the bun standard library.
